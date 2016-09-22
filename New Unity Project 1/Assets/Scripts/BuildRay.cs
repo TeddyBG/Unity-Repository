@@ -3,50 +3,47 @@ using System.Collections;
 
 public class BuildRay : MonoBehaviour {
 
-	public Transform setTransform {		
-		set {
-			if (parent == null)
-				parent = value;
-			else {
-				target = value;
-				if (target.Equals (parent))// если один и тот же объект то варриорс никуда не идут
-					target = parent = null;
-				else
-				trigger = true;
-			}
-		}
-	}
+
 	public bool trigger = false;
-	public Transform parent { get; private set; }
-	public Transform target{ get; private set; }
+	public Transform usurper;
+	public Transform target;
 	void Start () {
 		SetNull ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		if (target != null ) {
+			if (usurper == null)
+				target = usurper = null;
+			else
+				trigger = true;
+		}
+		if (usurper == null)
+			GameObject.Find ("Spotlight").GetComponent<Light> ().enabled = false;
+		else {
+			GameObject.Find ("Spotlight").GetComponent<Light> ().enabled = true;
+			GameObject.Find ("Spotlight").transform.position = new Vector3 (usurper.transform.position.x,
+				6f, usurper.transform.position.z);
+		}
 		if (trigger) {
-			if (GameObject.Find("Controller").GetComponent<WarriorInstantiate>().
-				InstantiateWarrior(parent.gameObject,target.gameObject))
-			{
-				/*StartCoroutine(Wait(0.2f, this.GetComponent<Renderer>().material.color));
-				parent.gameObject.GetComponent<Renderer>().material.color = Color.yellow;*/
+			GameObject.Find ("Controller").GetComponent<WarriorInstantiate> ().
+								InstantiateWarrior (usurper.gameObject, target.gameObject);
 
-			}
 
-			Debug.DrawLine (parent.position, target.position, 
-				new Color(Random.value, Random.value, Random.value, 1.0f), 1);
+			Debug.DrawLine (usurper.position, target.position, 
+				new Color (Random.value, Random.value, Random.value, 1.0f), 1);
+
+			
+			trigger = false;
+
 
 		}
 	}
 
-	IEnumerator Wait(float sec, Color defaultColor)
-	{
-		yield return new WaitForSeconds(sec);
-		parent.gameObject.GetComponent<Renderer>().material.color = defaultColor;
-	}
+
 	public void SetNull(){
-		
+		usurper = target = null;
 		trigger = false;
 	}
 }

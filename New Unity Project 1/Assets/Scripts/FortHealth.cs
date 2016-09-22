@@ -3,26 +3,39 @@ using System.Collections;
 
 public class FortHealth : MonoBehaviour {
  
-	public Transform target;
+	public GameObject[] targets;
 	Camera camera;
-	Vector3 screenPos;
+	Vector3[] positions;
 	void Start() {
+		
+
+
+		targets = GameObject.FindGameObjectsWithTag ("Range");
+		positions = new Vector3[targets.Length];
+		//targets.AddRange (GameObject.FindGameObjectsWithTag ("Blues"));
+		//targets.AddRange (GameObject.FindGameObjectsWithTag ("Greens"));
+
 		camera = GetComponent<Camera>();
 	}
 	
 	void Update() {
-		screenPos = camera.WorldToScreenPoint(target.position);
-		Debug.Log("target is " + screenPos.x + " pixels from the left");
+		for(int i = 0; i < positions.Length; i++)
+			positions[i] =  camera.WorldToScreenPoint (targets[i].transform.position);
+		//Debug.Log("target is " + screenPos.x + " pixels from the left");
 
 	}
 
 	void OnGUI(){
 		//WarriorInstantiate wi = GameObject.Find("Contoller").GetComponent<WarriorInstantiate>();
+		GUIStyle style = new GUIStyle();
+		style.normal.textColor = Color.black;
+		for (int i = 0; i < positions.Length; i++) {
+			GUI.Label (new Rect (Screen.width - positions[i].x+20, 
+				Screen.height - positions[i].y+20,
+				100, 50), 
 
-
-		GUI.Label(new Rect(Screen.width - screenPos.x, 
-		                   Screen.height - screenPos.y,
-		                   100, 50), 
-		          "Blue: " + "\n\rRed: "  );
+				"Health: " + targets[i].transform.parent.GetComponent<change>().health.ToString(), 
+				style);
+		}
 	}
 }

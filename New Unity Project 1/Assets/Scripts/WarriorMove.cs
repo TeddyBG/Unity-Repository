@@ -3,16 +3,19 @@ using System.Collections;
 
 public class WarriorMove : MonoBehaviour {
 
-	public Transform target;
+	public Transform target = null;
     //public GameObject parent;
 	public float speed = 3;
 
-    void Start()
+    /*void Start()
     {
 		target = GameObject.Find("Controller").GetComponent<BuildRay>().target.transform;
 		GameObject.Find ("Controller").GetComponent<BuildRay> ().SetNull ();
 		Debug.Log (target.name);
-    }
+    }*/
+	void OnEnable(){
+		target = this.gameObject.GetComponent<change> ().target;
+	}
 
     void Update()
     {        
@@ -25,9 +28,10 @@ public class WarriorMove : MonoBehaviour {
         if (collide.gameObject.name == target.name)
         {
             collide.gameObject.GetComponent<change>().health++;
-            Destroy(transform.gameObject);
+			PrefabsPool.instance.PutBackInPool(transform.gameObject);
         }
 		
     }
+
     
 }
